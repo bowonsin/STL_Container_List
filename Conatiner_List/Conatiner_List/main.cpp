@@ -13,10 +13,8 @@ struct List
 
 void AddObject(List* _Next,const int& _Value);
 void PrintList(List* _Next);
-void Insert(List* _Next,const int& _Value,int _Where);
-void Erase(List* _Next,int _Where );
-
-int Count = 0;
+void Insert(List** _Next,const int& _Value,int _Where, int Count);
+void Erase(List** _Next,int _Where , int Count);
 
 int main(void)
 {
@@ -27,6 +25,9 @@ int main(void)
 	for (int i = 0; i < 10; ++i)
 		// ** 10회 추가
 		AddObject(NumberList, i * 10 + 10);
+
+	Erase(&NumberList, 4, NULL);
+	Insert(&NumberList, 22, 7,NULL);
 
 	PrintList(NumberList);
 
@@ -40,8 +41,8 @@ void AddObject(List* _Next,const int& _Value)
 		List* Temp = new List;
 		Temp->Value = _Value;
 		Temp->Back = nullptr;
-
 		_Next->Back = Temp;
+
 	}
 	else
 		AddObject(_Next->Back, _Value);
@@ -56,90 +57,70 @@ void PrintList(List* _Next)
 }
 
 // 이거 아래 두개 숙제
-void Insert(List* _Next, const int& _Value, int _Where)
+void Insert(List** _Next, const int& _Value, int _Where, int Count)
 {
-	if (Count == 0)
+	if (Count == NULL && _Where == 0)
 	{
-		if (_Next->Back != nullptr)
+		if ((*_Next)->Back != nullptr)
 		{
 			List* Add = new List;
 			Add->Value = _Value;
-			_Next->Back = Add;
-			Add->Back = _Next->Back->Back;
-			_Next = Add;
-		}
-		else
-		{
-			List* Add = new List;
-			Add->Value = _Value;
-			_Next->Back = Add;
-			_Next = Add;
+			Add->Back = (*_Next);
+			(*_Next) = Add;
 		}
 	}
-	else if (_Where == 0)
+	else if (_Where == 0 && Count != NULL)
 	{
-		if (_Next->Back != nullptr)
+		if ((*_Next)->Back != nullptr)
 		{
 			List* Add = new List;
 			Add->Value = _Value;
-			_Next->Back = Add;
-			Add->Back = _Next->Back->Back;
+			Add->Back = (*_Next)->Back->Back;
+			(*_Next)->Back = Add;
 		}
 		else
 		{
 			List* Add = new List;
 			Add->Value = _Value;
-			_Next->Back = Add;
+			(*_Next)->Back = Add;
 		}
 	}
 	else
-	{
-		++Count;
-		Insert(_Next->Back, _Value, --_Where);
-		--Count;
-	}
+		Insert( &(*_Next)->Back, _Value, --_Where, ++Count);
 }
 
-void Erase(List* _Next, int _Where)
+void Erase(List** _Next, int _Where, int Count)
 {
-	if (Count == 0)
+	if (Count == NULL && _Where == 0)
 	{
-		if (_Next->Back != nullptr)
+		if ((*_Next)->Back != nullptr)
 		{
-			List* list_Erase;
-			list_Erase = _Next->Back;
-			delete _Next;
-			_Next = nullptr;
-			_Next = list_Erase;
+			List* Add = (*_Next)->Back;
+			delete (*_Next);
+			(*_Next) = nullptr;
+			(*_Next) = Add;
 		}
 		else
 		{
-			delete _Next;
-			_Next = nullptr;
+			delete (*_Next);
+			(*_Next) = nullptr;
 		}
 	}
-	else if (_Where == 0)
+	else if (Count != NULL && _Where == 0)
 	{
-		if (_Next->Back != nullptr)
+		if ((*_Next)->Back != nullptr)
 		{
-			List* list_Erase ;
-			list_Erase = _Next;
-			_Next = _Next->Back;
-			delete list_Erase;
-			list_Erase = nullptr;
+			List* Add = (*_Next)->Back;
+			delete (*_Next);
+			(*_Next) = nullptr;
+			(*_Next) = Add;
 		}
 		else
 		{
-			List* list_delete;
-			list_delete = _Next;
-			delete list_delete;
-			list_delete = nullptr;
+			delete (*_Next);
+			(*_Next) = nullptr;
 		}
 	}
 	else
-	{
-		++Count;
-		Erase(_Next->Back, --_Where);
-		--Count;
-	}
+		Erase(&(*_Next)->Back, --_Where, ++Count);
 }
