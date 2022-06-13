@@ -13,6 +13,7 @@ struct List
 
 void AddObject(List* _Next,const int& _Value);
 void PrintList(List* _Next);
+
 void Insert(List** _Next,const int& _Value,int _Where, int Count);
 void Erase(List** _Next,int _Where , int Count);
 
@@ -67,6 +68,12 @@ void Insert(List** _Next, const int& _Value, int _Where, int Count)
 			Add->Value = _Value;
 			Add->Back = (*_Next);
 			(*_Next) = Add;
+		}
+		else
+		{
+			List* Add = new List;
+			Add->Value = _Value;
+			Add->Back = (*_Next);
 		}
 	}
 	else if (_Where == 0 && Count != NULL)
